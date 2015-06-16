@@ -1,3 +1,5 @@
+package cookbook;
+
 
 import com.thoughtworks.xstream.XStream;
 import java.io.File;
@@ -17,7 +19,7 @@ import java.util.List;
 public class Pokusy {
 
     public static void main(String[] args) throws IOException {
-        Ingredient in1 = new Ingredient("citron");
+        /*Ingredient in1 = new Ingredient("citron");
         Ingredient in2 = new Ingredient("salotka");
         List<Ingredient> list1 = new ArrayList();
         Recipe r1 = new Recipe("spagety", Recipe.Category.Appetizers, list1, null, 0,0,null, null, 0);
@@ -41,7 +43,7 @@ public class Pokusy {
 
         if (r1.equals(r2)) {
 
-        System.out.println("xstream works");
+        System.out.println("xstream works");*/
         
        /* String filename = File.separator + "tonko" + File.separator + "miska.xml";
         System.out.println(filename);
@@ -52,5 +54,3 @@ public class Pokusy {
         }*/
     }
     }
-    }
-
