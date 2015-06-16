@@ -1,9 +1,9 @@
 package src;
 
-
 import src.GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -15,190 +15,120 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import net.miginfocom.swing.MigLayout;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Mišel
  */
 public class SearchPanel extends JPanel {
 
-        JTextField textField1;
-        JTextField textField2;
-        JTextField textField3;
-        JTextField textField4;
-        JTextField textField5;
-        JButton okButton;
-        JButton plusButton1;
-        JButton plusButton2;
-        JButton plusButton3;
-        JButton plusButton4;
-        Box verticalBox;
-        Box horizontalBox;
-        int counter;
-        JPanel centerPanel;
-        JComboBox comboBox;
-        GUI gui;
-        int i = 0;
+    JComboBox category;
+    JLabel labelcategory;
+    GUI gui;
+    JTextField hashTag1;
+    JTextField hashTag2;
+    JTextField hashTag3;
+    JTextField hashTag4;
+    JTextField hashTag5;
+    JLabel labelHashTag1;
+    JButton plusButton;
+    JButton searchButton;
+    int counter = 0;
 
-        public SearchPanel(JFrame frame) {
-            setBackground(new Color(248, 228, 159));
-            setLayout(new BorderLayout());
-            comboBox = new JComboBox();
-            comboBox.setModel(new DefaultComboBoxModel(new String[]{"Select Category", "Appetizers", "Beef", "Beverages", "Desserts", "Fish", "Pasta", "Pork", "Poultry", "Salads", "Soups"}));
-            this.gui = (GUI) frame;
-            centerPanel = new JPanel();
-            centerPanel.setLayout(new FlowLayout());
-            this.textField1 = new JTextField("Enter key word");
-            this.textField2 = new JTextField("Enter key word");
-            this.textField3 = new JTextField("Enter key word");
-            this.textField4 = new JTextField("Enter key word");
-            this.textField5 = new JTextField("Enter key word");
+    public SearchPanel(JFrame frame) {
+        setBackground(new Color(248, 228, 159));
+        this.gui = (GUI) frame;
+        setLayout(new MigLayout("wrap 3", "[][fill, grow]"));
+        category = new JComboBox();
+        category.setModel(new DefaultComboBoxModel(new String[]{"Select Category", "Appetizers", "Beef", "Beverages", "Desserts", "Fish", "Pasta", "Pork", "Poultry", "Salads", "Soups"}));
+        category.setMaximumSize(new Dimension(200, 40));
+        labelcategory = new JLabel("Search in category:   ");
+        this.labelHashTag1 = new JLabel("Add key words:");
+        this.hashTag1 = new JTextField("#");
+        //hashTag1.setMaximumSize(new Dimension(200, 40));
 
-            this.okButton = new JButton("Search");
-            this.plusButton1 = new JButton("+");
-            this.plusButton2 = new JButton("+");
-            this.plusButton3 = new JButton("+");
-            this.plusButton4 = new JButton("+");
+        this.hashTag2 = new JTextField("#");
+        //hashTag2.setMaximumSize(new Dimension(200, 40));
 
-            this.verticalBox = Box.createVerticalBox();
-            this.horizontalBox = Box.createHorizontalBox();
-            horizontalBox.add(textField1);
-            horizontalBox.add(plusButton1);
+        this.hashTag3 = new JTextField("#");
+        //hashTag3.setMaximumSize(new Dimension(200, 40));
 
-            verticalBox.add(horizontalBox);
+        this.hashTag4 = new JTextField("#");
+        //hashTag4.setMaximumSize(new Dimension(200, 40));
 
-            centerPanel.add(verticalBox);
-            centerPanel.add(okButton);
-            JPanel wrapPanel = new JPanel();
-            wrapPanel.setLayout(new GridBagLayout());
-            wrapPanel.add(comboBox);
-            wrapPanel.add(centerPanel);
-            this.add(wrapPanel, BorderLayout.NORTH);
+        this.hashTag5 = new JTextField("#");
+        //hashTag5.setMaximumSize(new Dimension(200, 40));
 
-            //this.add(comboBox, BorderLayout.NORTH);
-            //this.add(centerPanel, BorderLayout.CENTER);
-            //listenery
-            plusButton1.addActionListener(new ActionListener() {
+        this.plusButton = new JButton("+");
+        plusButton.setMaximumSize(new Dimension(40, 40));
+        this.searchButton = new JButton("Search");
 
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    Box plusBox = Box.createHorizontalBox();
-                    plusBox.add(textField2);
-                    plusBox.add(plusButton2);
-                    verticalBox.add(plusBox);
-                    i++;
+        add(labelcategory);
+        add(category);
+        add(new JLabel(""));
+        add(labelHashTag1);
+        add(hashTag1);
+        add(plusButton);
+        add(new JLabel(""));
+        add(searchButton);
+
+        plusButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (counter == 0) {
+                    //add(new JLabel(""));
+                    add(hashTag2);
+                    add(new JLabel(""));
+                    add(new JLabel(""));
+                    add(searchButton);
+                    add(new JLabel(""));
                     revalidate();
-                }
-            });
-
-            plusButton2.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    Box plusBox = Box.createHorizontalBox();
-                    plusBox.add(textField3);
-                    plusBox.add(plusButton3);
-                    verticalBox.add(plusBox);
+                    counter++;
+                } else if (counter == 1) {
+                    add(new JLabel(""));
+                    add(new JLabel(""));
+                    add(hashTag3);
+                    add(new JLabel(""));
+                    add(new JLabel(""));
+                    add(searchButton);
+                    add(new JLabel(""));
                     revalidate();
-                }
-            });
-
-            plusButton3.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    Box plusBox = Box.createHorizontalBox();
-                    plusBox.add(textField4);
-                    plusBox.add(plusButton4);
-                    verticalBox.add(plusBox);
+                    counter++;
+                } else if (counter == 2) {
+                    add(new JLabel(""));
+                    add(new JLabel(""));
+                    add(hashTag4);
+                    add(new JLabel(""));
+                    add(new JLabel(""));
+                    add(searchButton);
+                    add(new JLabel(""));
                     revalidate();
-                }
-            });
-
-            plusButton4.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    Box plusBox = Box.createHorizontalBox();
-                    plusBox.add(textField5);
-                    verticalBox.add(plusBox);
+                    counter++;
+                } else if (counter == 3) {
+                    add(new JLabel(""));
+                    add(new JLabel(""));
+                    add(hashTag5);
+                    add(new JLabel(""));
+                    add(new JLabel(""));
+                    add(searchButton);
+                    add(new JLabel(""));
                     revalidate();
-                }
-            });
-
-            textField1.addFocusListener(new FocusListener() {
-
-                @Override
-                public void focusGained(FocusEvent fe) {
-                    textField1.setText(null);
+                    counter++;
                 }
 
-                @Override
-                public void focusLost(FocusEvent fe) {
-
-                }
-            });
-
-            textField2.addFocusListener(new FocusListener() {
-
-                @Override
-                public void focusGained(FocusEvent fe) {
-                    textField2.setText(null);
-                }
-
-                @Override
-                public void focusLost(FocusEvent fe) {
-
-                }
-            });
-
-            textField3.addFocusListener(new FocusListener() {
-
-                @Override
-                public void focusGained(FocusEvent fe) {
-                    textField3.setText(null);
-                }
-
-                @Override
-                public void focusLost(FocusEvent fe) {
-
-                }
-            });
-
-            textField4.addFocusListener(new FocusListener() {
-
-                @Override
-                public void focusGained(FocusEvent fe) {
-                    textField4.setText(null);
-                }
-
-                @Override
-                public void focusLost(FocusEvent fe) {
-
-                }
-            });
-
-            textField5.addFocusListener(new FocusListener() {
-
-                @Override
-                public void focusGained(FocusEvent fe) {
-                    textField5.setText(null);
-                }
-
-                @Override
-                public void focusLost(FocusEvent fe) {
-
-                }
-            });
-
-        }  
+            }
+        });
 
     }
+
+}

@@ -1,13 +1,17 @@
 package src;
 
-
 import com.thoughtworks.xstream.XStream;
+import java.awt.Image;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import sun.dc.pr.PathStroker;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,17 +31,51 @@ public class XMLHelper {
     }
 
     public void saveRecipe(Recipe recipe) throws IOException {
-        xstream.toXML(recipe);
-        String fileName = File.separator + "recipes" + File.separator + recipe.getCategory() + File.separator + recipe.getName();
+        String content = xstream.toXML(recipe);
+        String fileName = File.separator + ".recipes" + File.separator + recipe.getCategory() + File.separator + recipe.getName();
         for (String hashtag : recipe.getHashtags()) {
             fileName += "_" + hashtag;
         }
-        fileName += "_" + System.currentTimeMillis();
+        recipe.setTimeStamp(System.currentTimeMillis());
+        fileName += "_" + recipe.getTimeStamp();
         //System.out.println(fileName);
-        File file = new File(System.getProperty("user.dir") + fileName);
+        File file = new File(System.getProperty("user.dir") + fileName + File.separator + recipe.getName());
         file.getParentFile().mkdirs();
-        file.createNewFile();
+        //file.createNewFile();
         // System.out.println(file.getAbsolutePath());
+
+        try (FileOutputStream fop = new FileOutputStream(file)) {
+
+            // if file doesn't exists, then create it
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            // get the content in bytes
+            byte[] contentInBytes = content.getBytes();
+
+            fop.write(contentInBytes);
+            fop.flush();
+            fop.close();
+
+            System.out.println("Done");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Path getImagePath(Recipe recipe) {
+        String pathName = System.getProperty("user.dir") + File.separator + ".recipes" + File.separator + recipe.getCategory() + File.separator + recipe.getName();
+        for (String hashtag : recipe.getHashtags()) {
+            pathName += "_" + hashtag;
+        }
+        pathName += "_" + recipe.getTimeStamp() + File.separator + "image.jpg";
+
+        Path p = Paths.get(pathName);
+
+        return p;
+
     }
 
     public void deleteRecipe(Recipe recipe) {
