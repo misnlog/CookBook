@@ -117,7 +117,7 @@ public class GUI extends JFrame {
             Box box = Box.createVerticalBox();
 
             for (JButton b : buttons) {
-                b.setForeground(new Color(40, 124, 108));
+                b.setForeground(new Color(44, 141, 126));
                 b.setAlignmentX(Component.LEFT_ALIGNMENT);
                 b.setPreferredSize(new Dimension(200, 200));
                 box.add(Box.createVerticalStrut(8));

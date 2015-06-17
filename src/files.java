@@ -33,7 +33,7 @@ public class files {
 
     public files() {
 
-        File userDir = new File(System.getProperty("user.dir"));
+        File userDir = new File(System.getProperty("user.dir") + File.separator + ".recipes");
         File[] files = userDir.listFiles();
 
         JMenu menu = new JMenu("Recent Files");
@@ -59,26 +59,25 @@ public class files {
         f.setVisible(true);
 
         try {
-            Path startPath = Paths.get(System.getProperty("user.dir") + File.separator + ".recipes" + File.separator + "Appetizers" + File.separator);
+            Path startPath = Paths.get(System.getProperty("user.dir") + File.separator + ".recipes" + File.separator + "Appetizers");
             Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir,
                         BasicFileAttributes attrs) {
-                    String nameDir = dir.toString();
-                    String substring = nameDir.substring(nameDir.lastIndexOf(File.separator) + 1);
-                    System.out.println(nameDir);
-                    
-                    String segments[] = substring.split("_");
-
-                    String document = segments[0];
-                    String category = "Appetizers";
-                    if(!document.equals(category)){
-                    System.out.println(document);
-                    }
-
+                    System.out.println("Dir: " + dir.toString());
                     return FileVisitResult.CONTINUE;
                 }
 
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    System.out.println("File: " + file.toString());
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException e) {
+                    return FileVisitResult.CONTINUE;
+                }
             });
         } catch (IOException e) {
             e.printStackTrace();
