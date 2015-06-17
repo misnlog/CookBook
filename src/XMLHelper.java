@@ -1,7 +1,6 @@
 package src;
 
 import com.thoughtworks.xstream.XStream;
-import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import sun.dc.pr.PathStroker;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
