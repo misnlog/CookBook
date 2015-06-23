@@ -1,0 +1,17 @@
+<pjv.cookbook.model.Recipe>
+  <name>Lubim Tonka</name>
+  <ingredients></ingredients>
+  <directions></directions>
+  <timeOfPreparation></timeOfPreparation>
+  <timeOfCooking></timeOfCooking>
+  <image>t1.jpg</image>
+  <hashtags>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+  </hashtags>
+  <timeStamp>1435047545929</timeStamp>
+  <category>Desserts</category>
+</pjv.cookbook.model.Recipe>

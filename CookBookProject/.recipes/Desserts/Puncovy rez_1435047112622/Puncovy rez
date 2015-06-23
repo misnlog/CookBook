@@ -1,0 +1,16 @@
+<pjv.cookbook.model.Recipe>
+  <name>Puncovy rez</name>
+  <ingredients></ingredients>
+  <directions></directions>
+  <timeOfPreparation></timeOfPreparation>
+  <timeOfCooking></timeOfCooking>
+  <hashtags>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+  </hashtags>
+  <timeStamp>1435047112622</timeStamp>
+  <category>Desserts</category>
+</pjv.cookbook.model.Recipe>
