@@ -1,0 +1,17 @@
+<pjv.cookbook.model.Recipe>
+  <name>Cupcakes</name>
+  <ingredients>muka
+cokolada</ingredients>
+  <directions>pripravime cesto</directions>
+  <timeOfPreparation>10</timeOfPreparation>
+  <timeOfCooking>20</timeOfCooking>
+  <hashtags>
+    <string>cupcakes</string>
+    <string>citron</string>
+    <string></string>
+    <string></string>
+    <string></string>
+  </hashtags>
+  <timeStamp>1435075223143</timeStamp>
+  <category>Desserts</category>
+</pjv.cookbook.model.Recipe>

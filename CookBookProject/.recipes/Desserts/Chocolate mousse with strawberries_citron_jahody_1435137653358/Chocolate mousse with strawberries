@@ -1,0 +1,16 @@
+<pjv.cookbook.model.Recipe>
+  <name>Chocolate mousse with strawberries</name>
+  <ingredients></ingredients>
+  <directions></directions>
+  <timeOfPreparation>20</timeOfPreparation>
+  <timeOfCooking></timeOfCooking>
+  <hashtags>
+    <string>citron</string>
+    <string>jahody</string>
+    <string></string>
+    <string></string>
+    <string></string>
+  </hashtags>
+  <timeStamp>1435137653358</timeStamp>
+  <category>Desserts</category>
+</pjv.cookbook.model.Recipe>

@@ -1,0 +1,17 @@
+<pjv.cookbook.model.Recipe>
+  <name>Macarons</name>
+  <ingredients>peniaze
+obchod</ingredients>
+  <directions>Tonko kupi v kaviarni vedla oázy.</directions>
+  <timeOfPreparation></timeOfPreparation>
+  <timeOfCooking></timeOfCooking>
+  <hashtags>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+  </hashtags>
+  <timeStamp>1435071165578</timeStamp>
+  <category>Desserts</category>
+</pjv.cookbook.model.Recipe>

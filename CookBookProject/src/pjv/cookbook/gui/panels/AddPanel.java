@@ -1,5 +1,6 @@
 package pjv.cookbook.gui.panels;
 
+import com.sun.javafx.sg.prism.NGRectangle;
 import com.thoughtworks.xstream.XStream;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -83,18 +84,20 @@ public class AddPanel extends JPanel {
     CollectionPanel collectionPanel;
     Recipe recipe;
     String imageName;
-    private NumberFormat amountFormat;
-    private JFormattedTextField amountField;
-    private double amount = 100000;
 
     public AddPanel(JFrame frame) throws IOException {
         setBackground(new Color(248, 228, 159));
-
         setLayout(new MigLayout("wrap 2", "[][fill, grow]"));
+        this.gui = (GUI) frame;
         this.name = new JTextField();
-        //name.setBorder( new EtchedBorder( EtchedBorder.LOWERED ) );
-        this.directions = new JTextArea(10, 10);
+        this.directions = new JTextArea(10, 10);       
+        directions.setLineWrap(true);
+        directions.setWrapStyleWord(true);
+
         this.ingredients = new JTextArea(10, 5);
+        ingredients.setLineWrap(true);
+        ingredients.setWrapStyleWord(true);
+        
         this.timeOfPreparation = new JTextField();
         timeOfPreparation.setMaximumSize(new Dimension(70, 40));
         this.timeOfCooking = new JTextField();
@@ -118,12 +121,10 @@ public class AddPanel extends JPanel {
         category.setEditable(true);
         category.setModel(new DefaultComboBoxModel(new String[]{"Select Category", "Appetizers", "Beef", "Beverages", "Desserts", "Fish", "Pasta", "Pork", "Poultry", "Salads", "Soups"}));
         this.imageButton = new JButton("Load image");
-        this.gui = (GUI) frame;
+
         this.saveButton = new JButton("Save");
         saveButton.setMaximumSize(new Dimension(250, 40));
-
         this.labelName = new JLabel("Name:");
-
         this.labelIngredients = new JLabel("Ingredients:");
         this.labelDirections = new JLabel("Directions:");
         this.labelTimeOfPreparation = new JLabel("Preparation time in minutes:  ");
@@ -133,42 +134,35 @@ public class AddPanel extends JPanel {
         this.helper = new XMLHelper(new XStream());
         this.collectionPanel = new CollectionPanel(gui);
 
-        List<JComponent> components = new ArrayList<JComponent>();
-
-        components.add(labelcategory);
-        components.add(category);
-        components.add(labelName);
-        components.add(name);
-        components.add(labelIngredients);
-        components.add(ingredients);
-        components.add(labelDirections);
-        components.add(directions);
-        components.add(labelTimeOfPreparation);
-        components.add(timeOfPreparation);
-        components.add(labelTimeOfCooking);
-        components.add(timeOfCooking);
-        components.add(labelHashTag1);
-        components.add(hashTag1);
-        components.add(new JLabel());
-        components.add(hashTag2);
-        components.add(new JLabel());
-        components.add(hashTag3);
-        components.add(new JLabel());
-        components.add(hashTag4);
-        components.add(new JLabel());
-        components.add(hashTag5);
-
-        components.add(imageButton);
-        components.add(saveButton);
+        add(labelcategory);
+        add(category);
+        add(labelName);
+        add(name);
+        add(labelIngredients);
+        add(ingredients);
+        add(labelDirections);
+        add(directions);
+        add(labelTimeOfPreparation);
+        add(timeOfPreparation);
+        add(labelTimeOfCooking);
+        add(timeOfCooking);
+        add(labelHashTag1);
+        add(hashTag1);
+        add(new JLabel());
+        add(hashTag2);
+        add(new JLabel());
+        add(hashTag3);
+        add(new JLabel());
+        add(hashTag4);
+        add(new JLabel());
+        add(hashTag5);
+        add(imageButton);
+        add(saveButton);
 
         PlainDocument doc1 = (PlainDocument) timeOfPreparation.getDocument();
         doc1.setDocumentFilter(new MyIntFilter());
         PlainDocument doc2 = (PlainDocument) timeOfCooking.getDocument();
         doc2.setDocumentFilter(new MyIntFilter());
-
-        for (JComponent c : components) {
-            this.add(c);
-        }
 
         imageButton.addActionListener(new ActionListener() {
 
@@ -221,18 +215,31 @@ public class AddPanel extends JPanel {
                             } catch (IOException ex) {
                                 Logger.getLogger(AddPanel.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            //BufferedImage myPicture = null;
+
+                            Path tmpImagePath = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "image.png");
 
                             if (imageFile != null) {
                                 try {
-                                    //myPicture = ImageIO.read(new File(imageFile.getAbsolutePath()));
+
                                     Files.copy(imageFile.toPath(), helper.getImagePath(recipe), REPLACE_EXISTING);
+                                    if (new File(tmpImagePath.toString()).exists()) {
+                                        Files.delete(tmpImagePath);
+                                    }
+                                } catch (IOException ex) {
+                                    Logger.getLogger(AddPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            } else if (new File(System.getProperty("java.io.tmpdir") + File.separator + "image.png").exists()) {
+
+                                Path target = helper.getImagePath(recipe);
+                                try {
+                                    Files.move(tmpImagePath, target, REPLACE_EXISTING);
                                 } catch (IOException ex) {
                                     Logger.getLogger(AddPanel.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             }
 
                             gui.remove(gui.imagePanel);
+                            gui.remove(gui.scroll);
                             gui.imagePanel = new SavedRecipePanel(gui);
                             gui.add(gui.imagePanel, BorderLayout.CENTER);
                             gui.revalidate();

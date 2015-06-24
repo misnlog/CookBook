@@ -24,15 +24,20 @@ import pjv.cookbook.model.Recipe;
 public class XMLHelper {
 
     XStream xstream;
+    //GUI gui;
+    //SearchPanel searchPanel;
+    
 
     public XMLHelper(XStream xstream) {
         this.xstream = xstream;
+        /*this.gui = new GUI();
+        searchPanel = new SearchPanel(gui);*/
     }
 
     public void saveRecipe(Recipe recipe) throws IOException {
 
         String content = xstream.toXML(recipe);
-        
+
         String fileName = File.separator + ".recipes" + File.separator + recipe.getCategory() + File.separator + recipe.getName();
         for (String hashtag : recipe.getHashtags()) {
             if (!hashtag.isEmpty()) {
@@ -55,7 +60,7 @@ public class XMLHelper {
 
             fop.write(contentInBytes);
             fop.flush();
-            fop.close();           
+            fop.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,13 +122,11 @@ public class XMLHelper {
         return setOfRecipes;
     }
 
-    public static void deleteDir(File file)
-            throws IOException {
+    public static void deleteDir(File file) throws IOException {
 
         if (file.isDirectory()) {
             if (file.list().length == 0) {
                 file.delete();
-
             } else {
                 String files[] = file.list();
                 for (String temp : files) {
@@ -134,10 +137,79 @@ public class XMLHelper {
                     file.delete();
                 }
             }
-
         } else {
             file.delete();
         }
     }
 
-}
+    /*public void displayFoundRecipes(Map<String, Integer> recipes, int hashtagCounter, String nameDir) {
+        Map<String, Integer> sortedRecipes = sortMap(recipes);
+        for (Map.Entry<String, Integer> entry : sortedRecipes.entrySet()) {
+
+            if (entry.getValue().equals(hashtagCounter)) {
+                String segments[] = entry.getKey().substring(nameDir.lastIndexOf(File.separator) + 1).split("_");
+                String name = segments[0];
+                JLabel label = new JLabel(name);
+
+                BufferedImage imageIcon = null;
+
+                if (new File(entry.getKey() + File.separator + "image.jpg").exists()) {
+
+                    try {
+                        imageIcon = ImageIO.read(new File(entry.getKey() + File.separator + "image.jpg"));
+                    } catch (IOException ex) {
+                        Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    try {
+                        imageIcon = ImageIO.read(getClass().getClassLoader().getResource("images/foodicon.png"));
+                    } catch (IOException ex) {
+                        Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                double ratio = (double) imageIcon.getWidth() / imageIcon.getHeight();
+                int width = (int) (150 * ratio);
+
+                BufferedImage resizedImageIcon = CategoryPanel.resize(imageIcon, width, 150);
+
+                label.setIcon(new ImageIcon(resizedImageIcon));
+                label.setBorder(new SoftBevelBorder(SoftBevelBorder.RAISED));
+                label.setHorizontalAlignment(JLabel.CENTER);
+                label.setVerticalAlignment(JLabel.CENTER);
+                label.setHorizontalTextPosition(JLabel.CENTER);
+                label.setVerticalTextPosition(JLabel.BOTTOM);
+                label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                label.setName(entry.getKey());
+
+                label.addMouseListener(new MouseAdapter() {
+
+                    @Override
+                    public void mouseClicked(MouseEvent me) {
+
+                        JTextArea area = new JTextArea();
+                        FileReader fileReader = null;
+                        try {
+                            fileReader = new FileReader(label.getName() + File.separator + label.getText());
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(CategoryPanel.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        XStream xstream = new XStream();
+                        xstream.alias("Recipe", Recipe.class);
+                        Recipe loadedRecipe = (Recipe) xstream.fromXML(fileReader);
+
+                        gui.remove(gui.imagePanel);
+                        gui.remove(gui.scroll);
+                        gui.imagePanel = new RecipePanel(gui, loadedRecipe);
+                        gui.add(gui.imagePanel, BorderLayout.CENTER);
+                        gui.revalidate();
+                        gui.repaint();
+                    }
+                }
+                );
+                searchPanel.foundRecipesPanel.add(label);
+            }
+        }
+    }*/
+    }

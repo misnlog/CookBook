@@ -1,0 +1,20 @@
+<pjv.cookbook.model.Recipe>
+  <name>Caramel cake</name>
+  <ingredients>20 dkg muky
+karamel
+200 g cokolady
+maslo</ingredients>
+  <directions></directions>
+  <timeOfPreparation></timeOfPreparation>
+  <timeOfCooking></timeOfCooking>
+  <image>donovans-food-(24).jpg</image>
+  <hashtags>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+  </hashtags>
+  <timeStamp>1435071522667</timeStamp>
+  <category>Desserts</category>
+</pjv.cookbook.model.Recipe>

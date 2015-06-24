@@ -1,17 +1,16 @@
 package pjv.cookbook.gui.panels;
 
-import pjv.cookbook.gui.entrypoint.GUI;
-import pjv.cookbook.gui.panels.AddPanel;
 import com.thoughtworks.xstream.XStream;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,11 +33,10 @@ import pjv.cookbook.utils.XMLHelper;
  *
  * @author Mišel
  */
-class RecipePanel extends JPanel {
+public class RecipePanel extends ParentPanel {
 
     JButton editButton;
     JButton deleteButton;
-    GUI gui;
     XMLHelper helper;
     AddPanel addPanel;
     Recipe recipe;
@@ -50,12 +48,12 @@ class RecipePanel extends JPanel {
     JLabel timeOfCooking;
     JLabel hashtags;
     JLabel lingredients;
-    JLabel ldirections;   
+    JLabel ldirections;
 
     public RecipePanel(JFrame frame, Recipe recipe) {
+        super(frame);
         setBackground(new Color(248, 228, 159));
         setLayout(new MigLayout("wrap", "[fill, grow]"));
-        this.gui = (GUI) frame;
         this.editButton = new JButton("Edit");
         editButton.setMaximumSize(new Dimension(130, 40));
         this.deleteButton = new JButton("Delete");
@@ -120,28 +118,23 @@ class RecipePanel extends JPanel {
         add(new JLabel(""));
         add(editButton);
         add(deleteButton);
-         helper = new XMLHelper(new XStream());
+        helper = new XMLHelper(new XStream());
 
         deleteButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
 
-               
                 try {
                     helper.deleteRecipe(recipe);
                 } catch (IOException ex) {
                     Logger.getLogger(RecipePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                gui.remove(gui.imagePanel);
                 JPanel panel = new JPanel();
                 panel.setBackground(new Color(248, 228, 159));
-                panel.add(new JLabel("Recipe: " + recipe.getName() + " was successfully deleted."));
-                gui.imagePanel = panel;
-                gui.add(gui.imagePanel, BorderLayout.CENTER);
-                gui.revalidate();
-                gui.repaint();
+                panel.add(new JLabel("Recipe '" + recipe.getName() + "' was successfully deleted."));
+                updatePanel(panel);
             }
         });
 
@@ -149,9 +142,10 @@ class RecipePanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                gui.remove(gui.imagePanel);
+
                 try {
                     addPanel = new AddPanel(gui);
+
                 } catch (IOException ex) {
                     Logger.getLogger(RecipePanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -160,31 +154,29 @@ class RecipePanel extends JPanel {
                 addPanel.ingredients.setText(recipe.getIngredients());
                 addPanel.directions.setText(recipe.getDirections());
                 addPanel.timeOfPreparation.setText(recipe.getTimeOfPreparation());
-                addPanel.timeOfCooking.setText(recipe.getTimeOfCooking());
-                //addPanel.hashTags.setText(recipe.getHashtags().toString());
-                // pridat image - nazov
-                addPanel.hashTag1.setText(recipe.getHashtags()[0]);
-                addPanel.hashTag2.setText(recipe.getHashtags()[1]);
-                addPanel.hashTag3.setText(recipe.getHashtags()[2]);
-                addPanel.hashTag4.setText(recipe.getHashtags()[3]);
-                addPanel.hashTag5.setText(recipe.getHashtags()[4]);
-                /*JLabel labelImageName = new JLabel(recipe.getImage());
-                addPanel.add(labelImageName);*/
+                addPanel.timeOfCooking.setText(recipe.getTimeOfCooking());                
+                addPanel.hashTag1.setText("#" + recipe.getHashtags()[0]);
+                addPanel.hashTag2.setText("#" + recipe.getHashtags()[1]);
+                addPanel.hashTag3.setText("#" + recipe.getHashtags()[2]);
+                addPanel.hashTag4.setText("#" + recipe.getHashtags()[3]);
+                addPanel.hashTag5.setText("#" + recipe.getHashtags()[4]);                
+                
                 Path imagePath = helper.getImagePath(recipe);
-                try {
-                    Files.copy(imagePath, helper.getImagePath(recipe), REPLACE_EXISTING); 
-                } catch (IOException ex) {
-                    Logger.getLogger(RecipePanel.class.getName()).log(Level.SEVERE, null, ex);
+                Path target = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "image.png");
+                if (new File(imagePath.toString()).exists()) {
+                    try {
+                        Files.copy(imagePath, target, REPLACE_EXISTING);
+                    } catch (IOException ex) {
+                        Logger.getLogger(RecipePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try {
+                        helper.deleteRecipe(recipe);
+                    } catch (IOException ex) {
+                        Logger.getLogger(RecipePanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-                try {
-                    helper.deleteRecipe(recipe);
-                } catch (IOException ex) {
-                    Logger.getLogger(RecipePanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                gui.imagePanel = addPanel;
-                gui.add(gui.imagePanel, BorderLayout.CENTER);
-                gui.revalidate();
-                repaint();
+                
+                updateScrollPanel(addPanel);
             }
         });
 

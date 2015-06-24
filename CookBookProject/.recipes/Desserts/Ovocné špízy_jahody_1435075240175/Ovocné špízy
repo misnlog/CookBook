@@ -1,0 +1,16 @@
+<pjv.cookbook.model.Recipe>
+  <name>Ovocné špízy</name>
+  <ingredients></ingredients>
+  <directions>napicháme ovocie</directions>
+  <timeOfPreparation></timeOfPreparation>
+  <timeOfCooking></timeOfCooking>
+  <hashtags>
+    <string>jahody</string>
+    <string></string>
+    <string></string>
+    <string></string>
+    <string></string>
+  </hashtags>
+  <timeStamp>1435075240175</timeStamp>
+  <category>Desserts</category>
+</pjv.cookbook.model.Recipe>

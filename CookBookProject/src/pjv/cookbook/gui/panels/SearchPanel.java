@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,12 +42,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.SoftBevelBorder;
 import net.miginfocom.swing.MigLayout;
 import pjv.cookbook.gui.entrypoint.GUI;
 import pjv.cookbook.model.Recipe;
+import pjv.cookbook.utils.XMLHelper;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -71,17 +75,39 @@ public class SearchPanel extends JPanel {
     JButton searchButton;
     int counter = 0;
     int valueCounter = 0;
+    int hashtagCounter = 0;
     Map<String, Integer> recipes;
     String nameDir;
+    JRadioButton or;
+    JRadioButton and;
+    ButtonGroup buttonGroup;
+    XMLHelper helper;
+    JPanel foundRecipesPanel;
 
     public SearchPanel(JFrame frame) {
         setBackground(new Color(248, 228, 159));
         this.gui = (GUI) frame;
         setLayout(new MigLayout("wrap 3", "[][fill, grow]"));
-        category = new JComboBox();
+        this.category = new JComboBox();
         category.setModel(new DefaultComboBoxModel(new String[]{"Select Category", "Appetizers", "Beef", "Beverages", "Desserts", "Fish", "Pasta", "Pork", "Poultry", "Salads", "Soups"}));
         category.setMaximumSize(new Dimension(200, 40));
         labelcategory = new JLabel("Search in category:   ");
+        this.or = new JRadioButton("OR");
+        this.and = new JRadioButton("AND");
+        this.buttonGroup = new ButtonGroup();
+        buttonGroup.add(or);
+        buttonGroup.add(and);
+        or.setSelected(true);
+        or.setBackground(new Color(248, 228, 159));
+        and.setBackground(new Color(248, 228, 159));
+        JPanel radioButtonPanel = new JPanel();
+        radioButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        radioButtonPanel.setBackground(new Color(248, 228, 159));
+        radioButtonPanel.setSize(new Dimension(50, 30));
+        radioButtonPanel.add(or);
+        radioButtonPanel.add(and);
+
+        this.setVisible(true);
         this.labelHashTag1 = new JLabel("Add key words:");
         this.hashTag1 = new JTextField("#");
         //hashTag1.setMaximumSize(new Dimension(200, 40));
@@ -102,14 +128,17 @@ public class SearchPanel extends JPanel {
         plusButton.setMaximumSize(new Dimension(40, 40));
         this.searchButton = new JButton("Search");
         this.recipes = new HashMap<String, Integer>();
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
-        panel.setBackground(new Color(248, 228, 159));
+        this.foundRecipesPanel = new JPanel();
+        foundRecipesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+        foundRecipesPanel.setBackground(new Color(248, 228, 159));
 
         add(labelcategory);
         add(category);
         add(new JLabel(""));
         add(labelHashTag1);
+        add(radioButtonPanel);
+        add(new JLabel(""));
+        add(new JLabel(""));
         add(hashTag1);
         add(plusButton);
         add(new JLabel(""));
@@ -196,21 +225,24 @@ public class SearchPanel extends JPanel {
                                     if (hashTagsArray[0].isEmpty() && hashTagsArray[1].isEmpty() && hashTagsArray[2].isEmpty() && hashTagsArray[3].isEmpty() && hashTagsArray[4].isEmpty()) {
                                         recipes.put(nameDir, 1);
                                     } else {
+                                        hashtagCounter = 0;
                                         for (int i = 0; i < 5; i++) {
                                             if (!hashTagsArray[i].isEmpty()) {
+                                                hashtagCounter++;
                                                 if (substring.toLowerCase().contains(hashTagsArray[i])) {
                                                     valueCounter++;
                                                 }
                                             }
                                         }
                                         recipes.put(nameDir, valueCounter);
-                                        valueCounter = 0;
+                                        valueCounter = 0;                                                                                
                                     }
 
                                 }
-
+                                
                                 return FileVisitResult.CONTINUE;
                             }
+
                         });
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -220,73 +252,162 @@ public class SearchPanel extends JPanel {
                     Map<String, Integer> sortedRecipes = sortMap(recipes);
                     for (Map.Entry<String, Integer> entry : sortedRecipes.entrySet()) {
 
-                        if (!entry.getValue().equals(0)) {
-                            String segments[] = entry.getKey().substring(nameDir.lastIndexOf(File.separator) + 1).split("_");
-                            String name = segments[0];
-                            JLabel label = new JLabel(name);
+                        if (and.isSelected()) {
+                            if (entry.getValue().equals(hashtagCounter)) {
+                                if (!entry.getValue().equals(0)) {
+                                String segments[] = entry.getKey().substring(nameDir.lastIndexOf(File.separator) + 1).split("_");
+                                String name = segments[0];
+                                JLabel label = new JLabel(name);
 
-                            BufferedImage imageIcon = null;
-                            
-                            try {
-                                imageIcon = ImageIO.read(new File(entry.getKey()+ File.separator + "image.jpg"));
-                            } catch (IOException ex) {
-                                Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            double ratio = (double) imageIcon.getWidth() / imageIcon.getHeight();
-                            int width = (int) (150 * ratio);
+                                BufferedImage imageIcon = null;
 
-                            BufferedImage resizedImageIcon = CategoryPanel.resize(imageIcon, width, 150);
+                                if (new File(entry.getKey() + File.separator + "image.jpg").exists()) {
 
-                            label.setIcon(new ImageIcon(resizedImageIcon));
-                            label.setBorder(new SoftBevelBorder(SoftBevelBorder.RAISED));
-                            label.setHorizontalAlignment(JLabel.CENTER);
-                            label.setVerticalAlignment(JLabel.CENTER);
-                            label.setHorizontalTextPosition(JLabel.CENTER);
-                            label.setVerticalTextPosition(JLabel.BOTTOM);
-                            label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                            label.setName(entry.getKey());
-                            //label.setForeground(new Color(35, 116, 104));                         
-                            
-                            label.addMouseListener(new MouseAdapter() {
-
-                                @Override
-                                public void mouseClicked(MouseEvent me) {
-
-                                    JTextArea area = new JTextArea();
-                                    FileReader fileReader = null;
                                     try {
-                                        fileReader = new FileReader(label.getName() + File.separator + label.getText());
-                                    } catch (FileNotFoundException ex) {
-                                        Logger.getLogger(CategoryPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                        imageIcon = ImageIO.read(new File(entry.getKey() + File.separator + "image.jpg"));
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
                                     }
-
-                                    XStream xstream = new XStream();
-                                    xstream.alias("Recipe", Recipe.class);
-                                    Recipe loadedRecipe = (Recipe) xstream.fromXML(fileReader);
-
-                                    gui.remove(gui.imagePanel);
-                                    gui.imagePanel = new RecipePanel(gui, loadedRecipe);
-                                    gui.add(gui.imagePanel, BorderLayout.CENTER);
-                                    gui.revalidate();
-                                    gui.repaint();
+                                } else {
+                                    try {
+                                        imageIcon = ImageIO.read(getClass().getClassLoader().getResource("images/foodicon.png"));
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
                                 }
 
-                            });
-                            panel.add(label);
+                                double ratio = (double) imageIcon.getWidth() / imageIcon.getHeight();
+                                int width = (int) (150 * ratio);
+
+                                BufferedImage resizedImageIcon = CategoryPanel.resize(imageIcon, width, 150);
+
+                                label.setIcon(new ImageIcon(resizedImageIcon));
+                                label.setBorder(new SoftBevelBorder(SoftBevelBorder.RAISED));
+                                label.setHorizontalAlignment(JLabel.CENTER);
+                                label.setVerticalAlignment(JLabel.CENTER);
+                                label.setHorizontalTextPosition(JLabel.CENTER);
+                                label.setVerticalTextPosition(JLabel.BOTTOM);
+                                label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                                label.setName(entry.getKey());
+                                //label.setForeground(new Color(35, 116, 104));                         
+
+                                label.addMouseListener(new MouseAdapter() {
+
+                                    @Override
+                                    public void mouseClicked(MouseEvent me) {
+
+                                        JTextArea area = new JTextArea();
+                                        FileReader fileReader = null;
+                                        try {
+                                            fileReader = new FileReader(label.getName() + File.separator + label.getText());
+                                        } catch (FileNotFoundException ex) {
+                                            Logger.getLogger(CategoryPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+
+                                        XStream xstream = new XStream();
+                                        xstream.alias("Recipe", Recipe.class);
+                                        Recipe loadedRecipe = (Recipe) xstream.fromXML(fileReader);
+
+                                        gui.remove(gui.imagePanel);
+                                        gui.remove(gui.scroll);
+                                        try {
+                                            gui.imagePanel = new RecipePanel(gui, loadedRecipe);
+                                        } catch (HeadlessException ex) {
+                                            Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        gui.add(gui.imagePanel, BorderLayout.CENTER);
+                                        gui.revalidate();
+                                        gui.repaint();
+                                    }
+                                });
+                                foundRecipesPanel.add(label);
+                            }
+                        }
+                                                           
+                            
+
+                        } else {
+
+                            if (!entry.getValue().equals(0)) {
+                                String segments[] = entry.getKey().substring(nameDir.lastIndexOf(File.separator) + 1).split("_");
+                                String name = segments[0];
+                                JLabel label = new JLabel(name);
+
+                                BufferedImage imageIcon = null;
+
+                                if (new File(entry.getKey() + File.separator + "image.jpg").exists()) {
+
+                                    try {
+                                        imageIcon = ImageIO.read(new File(entry.getKey() + File.separator + "image.jpg"));
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                } else {
+                                    try {
+                                        imageIcon = ImageIO.read(getClass().getClassLoader().getResource("images/foodicon.png"));
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+
+                                double ratio = (double) imageIcon.getWidth() / imageIcon.getHeight();
+                                int width = (int) (150 * ratio);
+
+                                BufferedImage resizedImageIcon = CategoryPanel.resize(imageIcon, width, 150);
+
+                                label.setIcon(new ImageIcon(resizedImageIcon));
+                                label.setBorder(new SoftBevelBorder(SoftBevelBorder.RAISED));
+                                label.setHorizontalAlignment(JLabel.CENTER);
+                                label.setVerticalAlignment(JLabel.CENTER);
+                                label.setHorizontalTextPosition(JLabel.CENTER);
+                                label.setVerticalTextPosition(JLabel.BOTTOM);
+                                label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                                label.setName(entry.getKey());
+                                //label.setForeground(new Color(35, 116, 104));                         
+
+                                label.addMouseListener(new MouseAdapter() {
+
+                                    @Override
+                                    public void mouseClicked(MouseEvent me) {
+
+                                        JTextArea area = new JTextArea();
+                                        FileReader fileReader = null;
+                                        try {
+                                            fileReader = new FileReader(label.getName() + File.separator + label.getText());
+                                        } catch (FileNotFoundException ex) {
+                                            Logger.getLogger(CategoryPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+
+                                        XStream xstream = new XStream();
+                                        xstream.alias("Recipe", Recipe.class);
+                                        Recipe loadedRecipe = (Recipe) xstream.fromXML(fileReader);
+
+                                        gui.remove(gui.imagePanel);
+                                        gui.remove(gui.scroll);
+                                        try {
+                                            gui.imagePanel = new RecipePanel(gui, loadedRecipe);
+                                        } catch (HeadlessException ex) {
+                                            Logger.getLogger(SearchPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        gui.add(gui.imagePanel, BorderLayout.CENTER);
+                                        gui.revalidate();
+                                        gui.repaint();
+                                    }
+                                });
+                                foundRecipesPanel.add(label);
+                            }
                         }
                     }
-
                     gui.remove(gui.imagePanel);
-                    gui.imagePanel = panel;
+                    gui.remove(gui.scroll);
+                    gui.imagePanel = foundRecipesPanel;
                     gui.add(gui.imagePanel, BorderLayout.CENTER);
                     gui.revalidate();
                     gui.repaint();
-
                 }
             }
         }
         );
-
     }
 
     public static Map<String, Integer> sortMap(Map<String, Integer> unsortMap) {

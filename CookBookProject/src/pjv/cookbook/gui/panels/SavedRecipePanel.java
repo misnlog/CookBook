@@ -33,7 +33,7 @@ public class SavedRecipePanel extends JPanel {
             setBackground(new Color(248, 228, 159));
             setLayout(new FlowLayout());
             this.gui = (GUI) frame;
-            this.label = new JLabel("Your recipe has been successfully saved.");
+            this.label = new JLabel("Your recipe was successfully saved.");
             this.button = new JButton("Add another recipe");
             add(label);
             add(button);
@@ -43,14 +43,15 @@ public class SavedRecipePanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     gui.remove(gui.imagePanel);
+                    gui.remove(gui.scroll);
                     try {
                         gui.imagePanel = new AddPanel(gui);
                     } catch (IOException ex) {
                         Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     gui.add(gui.imagePanel, BorderLayout.CENTER);
-                    revalidate();
-                    repaint();
+                    gui.revalidate();
+                    gui.repaint();
 
                 }
             });
